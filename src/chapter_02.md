@@ -38,8 +38,21 @@ fn main() {
 To obtain user input and then print the result as output, we need to bring the `io` input/output library into scope.
 The `io` library comes from the standard library, known as `std:`
 
-```rust, editable
+```rust, noplayground
 use std::io;
+# 
+# fn main() {
+#     println!("Guess the number!");
+#     println!("Please input your guess.");
+# 
+#     let mut guess = String::new();
+# 
+#     io::stdin()
+#         .read_line(&mut guess)
+#         .expect("Failed to read line");
+# 
+#     println!("You guessed: {guess}");
+# }
 ```
 
 By default, Rust has a set of items defined in the standard library that it brings into the scope of every program. This
@@ -51,16 +64,41 @@ user input.
 
 the `main` function is the entry point into the program:
 
-```rust, editable
+```rust, noplayground
+# use std::io;
+# 
 fn main() {
+#     println!("Guess the number!");
+#     println!("Please input your guess.");
+# 
+#     let mut guess = String::new();
+# 
+#     io::stdin()
+#         .read_line(&mut guess)
+#         .expect("Failed to read line");
+# 
+#     println!("You guessed: {guess}");
+# }
 ```
 
 The `fn` syntax declares a new function; the parentheses, `()`, indicate there are no parameters; and the curly
 bracket, `{`, starts the body of the function. `println!` is a macro that prints a string to the screen:
 
-```rust, editable
-println!("Guess the number!");
-println!("Please input your guess.");
+```rust, noplayground
+# use std::io;
+# 
+# fn main() {
+    println!("Guess the number!");
+    println!("Please input your guess.");
+# 
+#     let mut guess = String::new();
+# 
+#     io::stdin()
+#         .read_line(&mut guess)
+#         .expect("Failed to read line");
+# 
+#     println!("You guessed: {guess}");
+# }
 ```
 
 This code is printing a prompt stating what the game is and requesting input from the user.
@@ -69,13 +107,26 @@ This code is printing a prompt stating what the game is and requesting input fro
 
 We'll create a variable to store the user input, like this:
 
-```rust, editable
-let mut guess = String::new();
+```rust, noplayground
+# use std::io;
+# 
+# fn main() {
+#     println!("Guess the number!");
+#     println!("Please input your guess.");
+# 
+    let mut guess = String::new();
+# 
+#     io::stdin()
+#         .read_line(&mut guess)
+#         .expect("Failed to read line");
+# 
+#     println!("You guessed: {guess}");
+# }
 ```
 
 We use the `let` statement to create the variable. Here's another example:
 
-```rust, editable
+```rust, noplayground
 let apples = 5;
 ```
 
@@ -83,7 +134,7 @@ This line creates a new variable named `apples` and binds it to the value `5`. I
 default, meaning once we give the variable a value, the value won't change. We'll be discussing this concept in detail
 in "Variables and Mutability". To make a variable mutable, we add `mut` before the varaible name:
 
-```rust, editable
+```rust, noplayground
 let apples = 5;  // immutable
 let mut bananas = 5;  // mutable
 ```
@@ -106,9 +157,25 @@ empty instance of a `String`.
 Recall that we included the input/output functionality from the standard library with `use std::io;` on the first line
 of the program. Now we'll call the `stdin` function from the `io` module, which will allow us to handle user input:
 
-```rust, editable
-io::stdin()
-    .read_line(&mut guess)
+```rust, noplayground
+# use std::io;
+# 
+# fn main() {
+#     println!("Guess the number!");
+#     println!("Please input your guess.");
+# 
+#     let mut guess = String::new();
+# 
+    io::stdin()
+        .read_line(&mut guess)
+#         .expect("Failed to read line");
+# 
+#     println!("You guessed: {guess}");
+# }
 ```
 
-If we hadn't imported the `io` library with `use std::io;` at the beginning of the program, we could still use the function by writing this function call as `std::io::stdin`. The `stdin` function returns an instance of `std::io::Stdin`, which is a type that represents a handle to the standard input for your terminal.
+If we hadn't imported the `io` library with `use std::io;` at the beginning of the program, we could still use the
+function by writing this function call as `std::io::stdin`. The `stdin` function returns an instance
+of `std::io::Stdin`, which is a type that represents a handle to the standard input for your terminal.
+
+Next, the line `.read_line(&mut guess)` calls the `read_line` method on the standard input handle to get input from the user.
