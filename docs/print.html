@@ -150,6 +150,72 @@
                         <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="getting-started"><a class="header" href="#getting-started">Getting Started</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="programming-a-guessing-game"><a class="header" href="#programming-a-guessing-game">Programming a Guessing Game</a></h1>
+<p>Let's jump into Rust by working through a hands-on project together! This chapter introduces you to a few common Rust concepts by showing you how to use them in a real program. You'll learn about <code>let</code>, <code>match</code>, methods, associated functions, external crates, and more.</p>
+<h2 id="setting-up-a-new-project"><a class="header" href="#setting-up-a-new-project">Setting Up a New Project</a></h2>
+<pre><code class="language-text">$ cargo new guessing_game
+     Created binary (application) `guessing_game` package
+</code></pre>
+<p>The <code>run</code> command comes in handy when you need to rapidly iterate on a project, as we'll do in this game, quickly testing each iteration before moving on to the next one.</p>
+<h2 id="processing-a-guess"><a class="header" href="#processing-a-guess">Processing a Guess</a></h2>
+<p>ex 2.1 Code that gets a guess from the user and prints it</p>
+<pre><pre class="playground"><code class="language-rust  editable edition2021">use std::io;
+
+fn main() {
+    println!(&quot;Guess the number!&quot;);
+    println!(&quot;Please input your guess.&quot;);
+
+    let mut guess = String::new();
+
+    io::stdin()
+        .read_line(&amp;mut guess)
+        .expect(&quot;Failed to read line&quot;);
+
+    println!(&quot;You guessed: {guess}&quot;);
+}</code></pre></pre>
+<p>To obtain user input and then print the result as output, we need to bring the <code>io</code> input/output library into scope. The <code>io</code> library comes from the standard library, known as <code>std:</code></p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::io;
+<span class="boring">}</span></code></pre></pre>
+<p>By default, Rust has a set of items defined in the standard library that it brings into the scope of every program. This set is called the prelude, and you can see everything in it at https://doc.rust-lang-org/std/prelude/index.html.</p>
+<p>If a type you want to use isn't in the prelude, you have to bring that type into scope explicitly with a <code>use</code> statement. Using the <code>std::io</code> library provides you with a number of useful features, including the ability to accept user input.</p>
+<p>the <code>main</code> function is the entry point into the program:</p>
+<pre><pre class="playground"><code class="language-rust  editable edition2021"><span class="boring">use std::io;
+</span><span class="boring">
+</span>fn main() {
+<span class="boring">    println!(&quot;Guess the number!&quot;);
+</span><span class="boring">    println!(&quot;Please input your guess.&quot;);
+</span><span class="boring">
+</span><span class="boring">    let mut guess = String::new();
+</span><span class="boring">
+</span><span class="boring">    io::stdin()
+</span><span class="boring">        .read_line(&amp;mut guess)
+</span><span class="boring">        .expect(&quot;Failed to read line&quot;);
+</span><span class="boring">
+</span><span class="boring">    println!(&quot;You guessed: {guess}&quot;);
+</span><span class="boring">}</span></code></pre></pre>
+<p>The <code>fn</code> syntax declares a new function; the parentheses, <code>()</code>, indicate there are no parameters; and the curly bracket, <code>{</code>, starts the body of the function. <code>println!</code> is a macro that prints a string to the screen:</p>
+<pre><pre class="playground"><code class="language-rust  editable edition2021"><span class="boring">use std::io;
+</span><span class="boring">
+</span><span class="boring">fn main() {
+</span>    println!(&quot;Guess the number!&quot;);
+    println!(&quot;Please input your guess.&quot;);
+<span class="boring">
+</span><span class="boring">    let mut guess = String::new();
+</span><span class="boring">
+</span><span class="boring">    io::stdin()
+</span><span class="boring">        .read_line(&amp;mut guess)
+</span><span class="boring">        .expect(&quot;Failed to read line&quot;);
+</span><span class="boring">
+</span><span class="boring">    println!(&quot;You guessed: {guess}&quot;);
+</span><span class="boring">}</span></code></pre></pre>
+<p>This code is printing a prompt stating what the game is and requesting input from the user.</p>
+<h3 id="storing-values-with-variables"><a class="header" href="#storing-values-with-variables">Storing Values with Variables</a></h3>
+<p>We'll create a variable to store the user input, like this:</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let mut guess = String::new();
+<span class="boring">}</span></code></pre></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="common-programming-concepts"><a class="header" href="#common-programming-concepts">Common Programming Concepts</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="understanding-ownership"><a class="header" href="#understanding-ownership">Understanding Ownership</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="using-structs-to-structure-related-data"><a class="header" href="#using-structs-to-structure-related-data">Using Structs to Structure Related Data</a></h1>
