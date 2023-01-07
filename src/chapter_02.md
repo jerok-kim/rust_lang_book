@@ -36,6 +36,19 @@ To obtain user input and then print the result as output, we need to bring the `
 
 ```rust
 use std::io;
+# 
+# fn main() {
+#     println!("Guess the number!");
+#     println!("Please input your guess.");
+# 
+#     let mut guess = String::new();
+# 
+#     io::stdin()
+#         .read_line(&mut guess)
+#         .expect("Failed to read line");
+# 
+#     println!("You guessed: {guess}");
+# }
 ```
 
 By default, Rust has a set of items defined in the standard library that it brings into the scope of every program. This set is called the prelude, and you can see everything in it at https://doc.rust-lang-org/std/prelude/index.html.
@@ -44,7 +57,7 @@ If a type you want to use isn't in the prelude, you have to bring that type into
 
 the `main` function is the entry point into the program:
 
-```rust, editable
+```rust
 # use std::io;
 # 
 fn main() {
@@ -63,7 +76,7 @@ fn main() {
 
 The `fn` syntax declares a new function; the parentheses, `()`, indicate there are no parameters; and the curly bracket, `{`, starts the body of the function. `println!` is a macro that prints a string to the screen:
 
-```rust, editable
+```rust
 # use std::io;
 # 
 # fn main() {
@@ -87,5 +100,18 @@ This code is printing a prompt stating what the game is and requesting input fro
 We'll create a variable to store the user input, like this:
 
 ```rust
-let mut guess = String::new();
+# use std::io;
+# 
+# fn main() {
+#     println!("Guess the number!");
+#     println!("Please input your guess.");
+# 
+    let mut guess = String::new();
+# 
+#     io::stdin()
+#         .read_line(&mut guess)
+#         .expect("Failed to read line");
+# 
+#     println!("You guessed: {guess}");
+# }
 ```
