@@ -147,6 +147,237 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="getting-started"><a class="header" href="#getting-started">Getting Started</a></h1>
+<p>Let's start our Rust jorney! There's a lot to learn, but every journey starts somewhere. In this chapter, we'll discuss:</p>
+<ul>
+<li>Installing Rust on Linux, macOS, and Windows</li>
+<li>Writing a program that prints <code>Hello, world!</code></li>
+<li>Using <code>cargo</code>, Rust's package manager and build system</li>
+</ul>
+<h2 id="installiation"><a class="header" href="#installiation">Installiation</a></h2>
+<p>The first step is to install Rust. We'll download Rust through <code>rustup</code>, command line tool for managing Rust versions
+and associated tools.</p>
+<p>The following steps install the latest stable version of the Rust compiler.
+Rust's stability guarantees ensure that all the examples in the book that compile will continue to compile with newer
+Rust versions.</p>
+<h3 id="installing-rustup-on-linux-or-macos"><a class="header" href="#installing-rustup-on-linux-or-macos">Installing rustup on Linux or macOS</a></h3>
+<pre><code class="language-text">$ curl --proto '=https' --tlsv1.3 https://sh.rustup.rs -sSf | sh
+</code></pre>
+<h3 id="installing-rustup-on-windows"><a class="header" href="#installing-rustup-on-windows">Installing rustup on Windows</a></h3>
+<p>https://www.rust-lang.org/tools/install
+https://visualstudio.microsoft.com/downloads</p>
+<h3 id="troubleshooting"><a class="header" href="#troubleshooting">Troubleshooting</a></h3>
+<pre><code class="language-text">$ rustc --version
+</code></pre>
+<h3 id="updating-and-uninstalling"><a class="header" href="#updating-and-uninstalling">Updating and Uninstalling</a></h3>
+<pre><code class="language-text">$ rustup update
+</code></pre>
+<h3 id="local-documentation"><a class="header" href="#local-documentation">Local Documentation</a></h3>
+<p>The installation of Rust also includes a local copy of the documentation so that you can read it offline.
+Run <code>rustup doc</code> to open the local documentation in your browser.</p>
+<p>Any time a type or function is provided by the standard library and you're not sure what it does or how to use it, use
+the application programming interface (API) documentation to find out!</p>
+<h2 id="hello-world"><a class="header" href="#hello-world">Hello, World!</a></h2>
+<p>Now that you’ve installed Rust, it’s time to write your first Rust program.
+It’s traditional when learning a new language to write a little program that
+prints the text <code>Hello, world!</code> to the screen, so we’ll do the same here!</p>
+<h3 id="creating-a-project-directory"><a class="header" href="#creating-a-project-directory">Creating a Project Directory</a></h3>
+<p>You’ll start by making a directory to store your Rust code. It doesn’t matter to Rust where your code lives, but for the
+exercises and projects in this book, we suggest making a projects directory in your home directory and keeping all your
+projects there.
+Open a terminal and enter the following commands to make a projects
+directory and a directory for the “Hello, world!” project within the
+projects directory.</p>
+<pre><code class="language-text">$ mkdir hello_world
+$ cd hello_world
+</code></pre>
+<h3 id="writing-and-running-a-rust-program"><a class="header" href="#writing-and-running-a-rust-program">Writing and Running a Rust Program</a></h3>
+<p>Next, make a new source file and call it <code>main.rs</code>. Rust files always end with the <code>.rs</code> extension. If you're using more
+than one word in your filename, the convention is to use an underscore to separate them. For example,
+use <code>hello_world.rs</code> rather than <code>helloworld.rs</code>.</p>
+<pre><pre class="playground"><code class="language-rust  editable edition2021">fn main() {
+    println!(&quot;Hello, world!&quot;);
+}</code></pre></pre>
+<pre><code class="language-text">$ rustc main.rs
+$ ./main
+Hello, world!
+</code></pre>
+<p>If <code>Hello, world!</code> did print, congratulations! You've officially written a Rust program. That makes you a Rust
+programmer - welcome!</p>
+<h3 id="anatomy-of-a-rust-program"><a class="header" href="#anatomy-of-a-rust-program">Anatomy of a Rust Program</a></h3>
+<p>Let’s review this “Hello, world!” program in detail. Here’s the first piece of
+the puzzle:</p>
+<pre><code class="language-rust  noplayground">fn main() {
+<span class="boring">    println!(&quot;Hello, world!&quot;);
+</span>}</code></pre>
+<p>These lines define a function named <code>main</code>. The <code>main</code> function is special: it is always the first code that runs in
+every executable Rust program. Here the first line declares a function named <code>main</code> that has no parameters and returns
+nothing. If there were parameters, they would go inside the parentheses <code>()</code>.</p>
+<p>The function body is wrapped in <code>{}</code>. Rust requires curly brackets around all function bodies. It's good style to place
+the opening curly bracket on the same line as the function declaration, adding one space in between.</p>
+<blockquote>
+<p>If you want to stick to a standard style across Rust projects, you can use an automatic
+formatter tool called rustfmt to format your code in a particular style (more on rustfmt
+in Appendix D). The Rust team has included this tool with the standard Rust distribution, as rustc is, so it should
+already be installed on your computer!</p>
+</blockquote>
+<p>The body of the <code>main</code> function hold the following code:</p>
+<pre><code class="language-rust  noplayground"><span class="boring">fn main() {
+</span>    println!(&quot;Hello, world!&quot;);
+<span class="boring">}</span></code></pre>
+<p>This line does all the work in this little program: it prints text to the screen. There are four important details to
+notice here.</p>
+<p>First, Rust style is to indent with four spaces, not a tab.</p>
+<p>Second, <code>println!</code> calls a Rust macro. If it had called a function instead, it would be entered as <code>println</code>(without
+the <code>!</code>). We'll discuss Rust macros in more detail in Chapter 19. For now, you just need to know that using a <code>!</code> means
+that you're calling a macro instead of a normal function and that macros don't always follow the same rules as
+functions.</p>
+<p>Third, you see the <code>&quot;Hello, world!&quot;</code> string. We pass this string as an argument to <code>println!</code>, and the string is printed
+to the screen.</p>
+<p>Fourth, we end the line with a semicolon(<code>;</code>), which indicates that this expression is over and the next one is ready to
+begin. Most lines of Rust code end with a semicolon.</p>
+<h3 id="compiling-and-running-are-separate-steps"><a class="header" href="#compiling-and-running-are-separate-steps">Compiling and Running Are Separate Steps</a></h3>
+<p>You've just run a newly created program, so let's examine each step in the process.</p>
+<p>Before running a Rust program, you must compile it using the Rust compiler by entering the <code>rustc</code> command and passing
+it the name of your source file, like this:</p>
+<pre><code class="language-text">$ rustc main.rs
+</code></pre>
+<p>If you have a C or C++ background, you’ll notice that this is similar to
+<code>gcc</code> or <code>clang</code>. After compiling successfully, Rust outputs a binary executable.</p>
+<p>You can see the executable by entering the <code>ls</code> command in your shell:</p>
+<pre><code class="language-text">$ ls
+main.exe  main.pdb  main.rs
+</code></pre>
+<p>This shows the source code file with the <code>.rs</code> extension, the executable file (<code>main.exe</code> on Windows, but <code>main</code> on all
+other platforms), and, when using Windows, a file containing debugging information with the <code>.pdb</code> extension.</p>
+<p>Rust is an ahead-of-time compiled language, meaning you can compile a program and give the executable to someone else,
+and they can run it even without having Rust installed.</p>
+<p>Just compiling with <code>rustc</code> is fine for simple programs, but as your project grows, you'll want to manage all the
+options and make it easy to share your code. Next, we'll introduce you to the Cargo tool, which will help you write
+real-world Rust programs.</p>
+<h2 id="hello-cargo"><a class="header" href="#hello-cargo">Hello, Cargo!</a></h2>
+<p>Cargo is Rust’s build system and package manager. Most Rustaceans use
+this tool to manage their Rust projects because Cargo handles a lot of tasks
+for you, such as building your code, downloading the libraries your code
+depends on, and building those libraries. (We call the libraries that your
+code needs dependencies.)</p>
+<p>The simplest Rust programs, like the one we’ve written so far, don’t have
+any dependencies. If we had built the “Hello, world!” project with Cargo, it
+would only use the part of Cargo that handles building your code. As you
+write more complex Rust programs, you’ll add dependencies, and if you start
+a project using Cargo, adding dependencies will be much easier to do.</p>
+<p>Because the vast majority of Rust projects use Cargo, the rest of this
+book assumes that you’re using Cargo too. Cargo comes installed with Rust
+if you used the official installers discussed in “Installation” on page 1. If you installed Rust through some other
+means, check whether Cargo is installed by entering the following in your terminal:</p>
+<pre><code class="language-text">$ cargo --version
+</code></pre>
+<h3 id="creating-a-project-with-cargo"><a class="header" href="#creating-a-project-with-cargo">Creating a Project with Cargo</a></h3>
+<pre><code class="language-text">$ cargo init
+</code></pre>
+<p>You'll see that Cargo has generated <code>Cargo.toml</code> file.</p>
+<p>It has also initialized a new Git repository along with a <code>.gitignore</code> file. Git files won't be generated if you
+run <code>cargo new</code> within an existing Git repository; you can override this behavior by using <code>cargo new --vcs=git</code>.</p>
+<pre><code class="language-text">[package]
+name = &quot;hello_world&quot;
+version = &quot;0.1.0&quot;
+edition = &quot;2021&quot;
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+
+[[bin]]
+name = &quot;hello_world&quot;
+path = &quot;main.rs&quot;
+</code></pre>
+<p>This file is in the TOML(Tom's Obvious, Minimal Language) format, which is Cargo's configuration format.</p>
+<p>The first line, <code>[package]</code>, is a section heading that indicates that the following statements are configuring a
+package. As we add more information to this file we'll add other sections.</p>
+<p>The next three lines set the configuration information Cargo needs to compile your program: the name, the version, and
+the edition of Rust to use.</p>
+<p>The last line, <code>[dependencies]</code>, is the start of a section for you to list any of your project's dependencies. In Rust,
+packages of code are referred to as <code>crates</code>. We won't need any other crates for this project, but we will in the first
+project in Chapter 2, so we'll use this dependencies section then.</p>
+<p>Cargo expects your source files to live inside the <code>src</code> directory. The top-level project directory is just for README
+files, license information, configuration files, and anything else not related to your code. Using Cargo helps you
+organize your projects. There's a place for everything, and everything is in its place.</p>
+<h3 id="building-and-running-a-cargo-project"><a class="header" href="#building-and-running-a-cargo-project">Building and Running a Cargo Project</a></h3>
+<pre><code class="language-text">$ cargo build
+</code></pre>
+<p>This command creates an executable file in <code>target\debug\hello_cargo.exe</code> rather than in your current directory. Because
+the default build is a debug build, Cargo puts the binary in a directory named <code>debug</code>. You can run the executable with
+this command:</p>
+<pre><code class="language-text">$ ./target/debug/hello_world
+Hello, world!
+</code></pre>
+<p>Running <code>cargo build</code> for the first time also causes Cargo to create a new file at the top level: <code>Cargo.lock</code>. This
+file keeps track of the exact versions of dependencies in your project. This project doesn't have dependencies, so the
+file is a bit sparse. You won't ever need to change this file manually; Cargo manages its contents for you.</p>
+<p>We just built a project with cargo build and ran it with <code>./target/debug/ hello_world</code>, but we can also use <code>cargo run</code> to compile the code and then run
+the resultant executable all in one command:</p>
+<pre><code class="language-text">$ cargo run
+    Finished dev [unoptimized + debuginfo] target(s) in 0.00s
+     Running `target\debug\hello_world.exe`
+Hello, world!
+</code></pre>
+<p>Using <code>cargo run</code> is more convenient that having to remember to run <code>cargo build</code> and then use the whole path to the
+binary, so most developers use <code>cargo run</code>.</p>
+<p>Notice that this time we didn't see output indicating that Cargo was compiling <code>hello_world</code>. Cargo figured out that the
+files hadn't changed, so it didn't rebuild but just ran the binary. If you had modified your source code, Cargo would
+have rebuilt the project before running it.</p>
+<p>Cargo also provides a command called <code>cargo check</code>. This command quickly checks your code to make sure it compiles but
+doesn't produce an executable:</p>
+<pre><code class="language-text">$ cargo check
+    Checking hello_world v0.1.0 (C:\Users\jerok\projects\study_blog\rust_lang_book\code\ch01\hello_world)
+    Finished dev [unoptimized + debuginfo] target(s) in 0.07s
+</code></pre>
+<p>Why would you not want an executable? Often, <code>cargo check</code> is much faster then <code>cargo build</code> because it skips the step
+of producing an executable. If you're continually checking your work while writing the code, using <code>cargo check</code> will
+speed up the process of letting you know if your project is still compiling! As such, many Rustaceans run <code>cargo check</code>
+periodically as they write their program to make sure it compiles. Then they run <code>cargo build</code> when they're ready to use
+the executable.</p>
+<p>Let's recap what we've learned so far about Cargo:</p>
+<ul>
+<li>We can create a project using <code>cargo new</code>.</li>
+<li>We can build a project using <code>cargo build</code>.</li>
+<li>We can build and run a project in one step using <code>cargo run</code>.</li>
+<li>We can build a project without producing a binary to check for errors using <code>cargo check</code>.</li>
+<li>Instead of saving the result of the build in the same directory as our code, Cargo stores it in the <code>target/debug</code>
+directory.</li>
+</ul>
+<p>An additional advantage of using Cargo is that the commands are the same no matter which operating system you're working
+on. So, at this point, we'll no longer provide specific instructions for Linux and macOS versus Windows.</p>
+<h3 id="building-for-release"><a class="header" href="#building-for-release">Building for Release</a></h3>
+<p>When your project is finally ready for release, you can use <code>cargo build --release</code> to compile it with optimizations.
+This command will create an executable in <code>target/release</code> instead of <code>target/debug</code>. The optimizations make your Rust
+code run faster, but turning them on lengthens the time it takes for your program to compile. This is why there are two
+different profiles: one for development, when you want to rebuild quickly and often, and another for building the final
+program you'll give to a user that won't be rebuilt repeatedly and that will run as fast as possible. If you're
+benchmarking your code's running time, be sure to run <code>cargo build --release</code> and benchmark with the executable
+in <code>target/release</code>.</p>
+<h3 id="cargo-as-convention"><a class="header" href="#cargo-as-convention">Cargo as Convention</a></h3>
+<p>With simple projects, Cargo doesn't provide a lot of value over just using <code>rustc</code>, but it will prove its worth as your
+programs become more intricate.
+Once programs grow to multiple files or need a dependency, it's much easier to let Cargo coordinate the build.</p>
+<p>Even though the <code>hello_cargo</code> project is simple, it now uses much of the real tooling you'll use in the rest of your
+Rust career. In fact, to work on any existing projects, you can use the following commands to check out the code using
+Git, change to that project's directory, and build:</p>
+<pre><code class="language-text">git clone example.org/someproject
+cd someproject
+cargo build
+</code></pre>
+<h2 id="summary"><a class="header" href="#summary">Summary</a></h2>
+<p>You're already off to a great start on your Rust journey! In this chapter, you've learned how to:</p>
+<ul>
+<li>Install the latest stable version of Rust using <code>rustup</code></li>
+<li>Update to a newer Rust version</li>
+<li>Open locally installed documentation</li>
+<li>Write and run a &quot;Hello, world!&quot; program using <code>rustc</code> directly</li>
+<li>Create and run a new project using the conventions of Cargo</li>
+</ul>
+<p>This is a great time to build a more substantial program to get used to reading and writing RUst code. So, in Chapter 2,
+we'll build a guessing game program. If you would rather start by learning how common programming concepts work in Rust,
+see Chapter 3 and then return to Chapter 2.</p>
 
                     </main>
 
