@@ -245,7 +245,7 @@ bracket, <code>{</code>, starts the body of the function. <code>println!</code> 
 <pre><code class="language-rust  noplayground">let apples = 5;</code></pre>
 <p>This line creates a new variable named <code>apples</code> and binds it to the value <code>5</code>. In Rust, variables are immutable by
 default, meaning once we give the variable a value, the value won't change. We'll be discussing this concept in detail
-in &quot;Variables and Mutability&quot;. To make a variable mutable, we add <code>mut</code> before the varaible name:</p>
+in &quot;Variables and Mutability&quot;. To make a variable mutable, we add <code>mut</code> before the variable name:</p>
 <pre><code class="language-rust  noplayground">let apples = 5;  // immutable
 let mut bananas = 5;  // mutable</code></pre>
 <p><code>let mut guess</code> will introduce a mutable variable named <code>guess</code>. The equal sign (<code>=</code>) tells Rust we want to bind
@@ -379,26 +379,371 @@ rand = &quot;0.8.5&quot;
 <p>There's a lot more to say about Cargo and its ecosystem, which we'll discuss in Chapter 14, but for now, that's all we need to know. Cargo makes it very easy to reuse libraries, so Rustaceans are able to write smaller projects that are assembled from a number of packages.</p>
 <h3 id="generating-a-random-number"><a class="header" href="#generating-a-random-number">Generating a Random Number</a></h3>
 <p>Let's start using <code>rand</code> to generate a number to guess. The next step is to update <code>src/main.rs</code></p>
-<pre><pre class="playground"><code class="language-rust  editable edition2021"><span class="boring">use std::io;
-</span>use rand::Rng;
-
-<span class="boring">fn main() {
-</span><span class="boring">   println!(&quot;Guess the number!&quot;);
-</span><span class="boring">
-</span>    let secret_number = rand::thread_rng().gen_range(1..=100);
-
-    println!(&quot;The secret number is: {secret_number}&quot;);
+<pre><code class="language-rust  noplayground"><span class="boring">use std::io;
+</span>use rand::Rng;      // 1
 <span class="boring">
-</span><span class="boring">   println!(&quot;Please input your guess.&quot;);
+</span><span class="boring">fn main() {
+</span><span class="boring">    println!(&quot;Guess the number!&quot;);
 </span><span class="boring">
-</span><span class="boring">   let mut guess = String::new();
+</span>    let secret_number = rand::thread_rng().gen_range(1..=100);  // 2
+
+    println!(&quot;The secret number is: {secret_number}&quot;);          // 3
+<span class="boring">
+</span><span class="boring">    println!(&quot;Please input your guess.&quot;);
 </span><span class="boring">
-</span><span class="boring">   io::stdin()
-</span><span class="boring">       .read_line(&amp;mut guess)
-</span><span class="boring">       .expect(&quot;Failed to read line&quot;);
+</span><span class="boring">    let mut guess = String::new();
 </span><span class="boring">
-</span><span class="boring">   println!(&quot;You guessed: {guess}&quot;);
-</span><span class="boring">}</span></code></pre></pre>
+</span><span class="boring">    io::stdin()
+</span><span class="boring">        .read_line(&amp;mut guess)
+</span><span class="boring">        .expect(&quot;Failed to read line&quot;);
+</span><span class="boring">
+</span><span class="boring">    println!(&quot;You guessed: {guess}&quot;);
+</span><span class="boring">}</span></code></pre>
+<p>First we add the line <code>use rand::Rng;</code>(1).
+The <code>Rng</code> trait defines methods that random number generators implement,
+and this trait must be in scope for ust to use those methods.
+Chapter 10 will cover traits in detail.</p>
+<p>Next, we're adding two lines in the middle.
+In the first line (2),
+we call the <code>rand::thread_rng</code> function that gives us the particular random number generator we're going to use:
+one that is local to the current thread of execution and is seeded by the operating system.
+Then we call the <code>gen_range</code> method on the random number generator.
+This method is defined by the <code>Rng</code> trait that we brought into scope with the <code>use rand::Rng;</code> statement.
+The <code>gen_range</code> method takes a range expression as an argument and generates a random number in the rage.
+The kind of range expression we're using here takes the from
+<code>start..=end</code> and is inclusive on the lower and upper bounds,
+so we need to specify <code>1..=100</code> to request a number between 1 and 100.</p>
+<blockquote>
+<p>You won't just know which traits to use and which methods and functions to call from a crate, so each crate has documentation with instructions for using it. Another neat feature of Cargo is that running the <code>cargo doc --open</code> command will build documentation provided by all your dependencies locally and open it in your browser. If you're interested in other functionality in the <code>rand</code> crate, for example, run <code>cargo doc --open</code> and click <code>rand</code> in the sidebar on the left.</p>
+</blockquote>
+<p>The second new line (3) prints the secret number.
+This is useful while we're developing the program to be able to test it, but we'll delete it from the final version.
+It's not much of a game if the program prints the answer as soon as it starts!</p>
+<h2 id="comparing-the-guess-to-the-secret-number"><a class="header" href="#comparing-the-guess-to-the-secret-number">Comparing the Guess to the Secret Number</a></h2>
+<p>Now that we have user input and a random number, we can compare them.</p>
+<pre><code class="language-rust  noplayground"><span class="boring">use std::io;
+</span>use std::cmp::Ordering;     // 1
+<span class="boring">use rand::Rng;
+</span><span class="boring">
+</span><span class="boring">fn main() {
+</span><span class="boring">    println!(&quot;Guess the number!&quot;);
+</span><span class="boring">
+</span><span class="boring">    let secret_number = rand::thread_rng().gen_range(1..=100);
+</span><span class="boring">
+</span><span class="boring">    println!(&quot;The secret number is: {secret_number}&quot;);
+</span><span class="boring">
+</span><span class="boring">    println!(&quot;Please input your guess.&quot;);
+</span><span class="boring">
+</span><span class="boring">    let mut guess = String::new();
+</span><span class="boring">
+</span><span class="boring">    io::stdin()
+</span><span class="boring">        .read_line(&amp;mut guess)
+</span><span class="boring">        .expect(&quot;Failed to read line&quot;);
+</span><span class="boring">
+</span><span class="boring">    println!(&quot;You guessed: {guess}&quot;);
+</span><span class="boring">
+</span>    match guess.cmp(&amp;secret_number) {       // 2, 3
+        Ordering::Less =&gt; println!(&quot;Too small!&quot;),
+        Ordering::Greater =&gt; println!(&quot;Too big!&quot;),
+        Ordering::Equal =&gt; println!(&quot;You win!&quot;),
+    }
+<span class="boring">}</span></code></pre>
+<p>First we add another <code>use</code> statement (1),
+bringing a type called <code>std::cmp::Ordering</code> into scope from the standard library.
+The <code>Ordering</code> type is another enum and has the variants <code>Less</code>, <code>Greater</code>, and <code>Equal</code>.
+These are the three outcomes that are possible when you compare two values.</p>
+<p>Then we add five new lines at the bottom that use the <code>Ordering</code> type.
+The <code>cmp</code> method (3) compares two values and can be called on anything that can be compared.
+It takes a reference to whatever you want to compare with: here it's comparing <code>guess</code> to <code>secret_number</code>.
+Then it returns a variant of the <code>Ordering</code> enum we brought into scope with the <code>use</code> statement.
+We use a <code>match</code> expression (2)
+to decide what to do next based on which variant of <code>Ordering</code> was returned from the call to <code>cmp</code> with the values in <code>guess</code> and <code>secret_number</code>.</p>
+<p>A <code>match</code> expression is made up of arms.
+An arm consists of a pattern to match against,
+and the code that should be run if the value given to <code>match</code> fits that arm's pattern.
+Rust takes the value given to <code>match</code> and looks through each arm's pattern in turn.
+Patterns and the <code>match</code> construct are powerful Rust features:
+they let you express a variety of situations your code might encounter and they make sure you handle them all.
+These features will be covered in detail in Chapter 6 and Chapter 18, respectively.</p>
+<p>Let's walk through an example with the <code>match</code> expression we use here. Say that the user has guessed 50 and the randomly generated secret number this time is 38.</p>
+<p>When the code compares 50 to 38, the <code>cmp</code> method will return <code>Ordering::Greater</code> because 50 is greater than 38. The <code>match</code> expression gets the <code>Ordering::Greater</code> value and starts checking each arm's pattern. It looks at the first arm's pattern, <code>Ordering::Less</code>, and sees that the value <code>Ordering::Greater</code> does not match <code>Ordering::Less</code>, so it ignores the code in that arm and moves to the next arm. The next arm's pattern is <code>Ordering::Greater</code>, which does match <code>Ordering::Greater</code>! The associated code in that arm will execute and print <code>Too big!</code> to the screen. The <code>match</code> expression ends after the first successful match, so it won't look at the last arm in this scenario. However, the code won't compile yet.</p>
+<pre><code class="language-text">error[E0308]: mismatched types                                                                            
+   --&gt; src\main.rs:22:21
+    |
+22  |     match guess.cmp(&amp;secret_number) {
+    |                 --- ^^^^^^^^^^^^^^ expected struct `String`, found integer
+    |                 |
+    |                 arguments to this function are incorrect
+    |
+    = note: expected reference `&amp;String`
+               found reference `&amp;{integer}`
+note: associated function defined here
+   --&gt; C:\Users\jerok\.rustup\toolchains\stable-x86_64-pc-windows-msvc\lib/rustlib/src/rust\library\core\src\cmp.rs:789:8
+    |
+789 |     fn cmp(&amp;self, other: &amp;Self) -&gt; Ordering;
+    |        ^^^
+
+For more information about this error, try `rustc --explain E0308`.                                       
+error: could not compile `guessing_game` due to previous error
+</code></pre>
+<p>The core of the error states that there are mismatched types. Rust has a strong, static type system. However, it also has type inference. When we wrote <code>let mut guess = String::new()</code>, Rust was able to infer that <code>guess</code> should be a <code>String</code> and didn't make us write the type. The <code>secret_number</code>, on the other hand, is a number type. A few of Rust's number types can have a value between 1 and 100: <code>i32</code>, a 32-bit number; <code>u32</code>, an unsigned 32-bit number; <code>i64</code>, a 64-bit number; as well as others. Unless otherwise specified, Rust defaults to an <code>i32</code>, which is the type of <code>secret_number</code> unless you add type information elsewhere that would cause Rust to infer a different numerical type. The reason for the error is that Rust cannot compare a string and a number type.</p>
+<p>Ultimately, we want to convert the <code>String</code> the program reads as input into a real number type so we can compare it numerically to the secret number. We do so by adding this line to the <code>main</code> function body:</p>
+<pre><code class="language-rust  noplayground"><span class="boring">use std::io;
+</span><span class="boring">use std::cmp::Ordering;
+</span><span class="boring">use rand::Rng;
+</span><span class="boring">
+</span><span class="boring">fn main() {
+</span><span class="boring">    println!(&quot;Guess the number!&quot;);
+</span><span class="boring">
+</span><span class="boring">    let secret_number = rand::thread_rng().gen_range(1..=100);
+</span><span class="boring">
+</span><span class="boring">    println!(&quot;The secret number is: {secret_number}&quot;);
+</span><span class="boring">
+</span><span class="boring">    println!(&quot;Please input your guess.&quot;);
+</span><span class="boring">
+</span><span class="boring">    let mut guess = String::new();
+</span><span class="boring">
+</span><span class="boring">    io::stdin()
+</span><span class="boring">        .read_line(&amp;mut guess)
+</span><span class="boring">        .expect(&quot;Failed to read line&quot;);
+</span><span class="boring">    
+</span>    let guess: u32 = guess
+        .trim()
+        .parse()
+        .expect(&quot;Please type a number!&quot;);
+<span class="boring">
+</span><span class="boring">    println!(&quot;You guessed: {guess}&quot;);
+</span><span class="boring">
+</span><span class="boring">    match guess.cmp(&amp;secret_number) {
+</span><span class="boring">        Ordering::Less =&gt; println!(&quot;Too small!&quot;),
+</span><span class="boring">        Ordering::Greater =&gt; println!(&quot;Too big!&quot;),
+</span><span class="boring">        Ordering::Equal =&gt; println!(&quot;You win!&quot;),
+</span><span class="boring">    }
+</span><span class="boring">}</span></code></pre>
+<p>We create a variable named <code>guess</code>. But wait, doesn't the program already have a variable named <code>guess</code>? It does but helpfully Rust allows us to shadow the previous value of <code>guess</code> with a new one. Shadowing lets us reuse the <code>guess</code> variable name rather than forcing us to create two unique variables, such as <code>guess_str</code> and <code>guess</code>, for example. We'll cover this in more detail in Chapter 3, but for now, know that this feature is often used when you want to conver a value from one type to another type.</p>
+<p>We bind this new variable to the expression <code>guess.trim().parse()</code>. The <code>guess</code> in the expression refers to the original <code>guess</code> variable that contained the input as a string. The <code>trim</code> method on a <code>String</code> instance will eliminate any whitespace at the beginning and end, which we must do to be able to compare the string to the <code>u32</code>, which can only contain numerical data. The user must press ENTER to satisfy <code>read_line</code> and input their guess, which adds a newline character to the string. For example, if the user types 5 and presses ENTER, <code>guess</code> looks like this: <code>5\n</code>. The <code>\n</code> represents &quot;newline.&quot; (On Windows, pressing ENTER results in a carriage return and a newline, <code>\r\n</code>.) The <code>trim</code> method eliminates <code>\n</code> or <code>\r\n</code>, resulting in just 5.</p>
+<p>The <code>parse</code> method on strings converts a string to another type. Here, we use it to convert from a string to a number. We need to tell Rust the exact number type we want by using <code>let guess: u32</code>. The colon (<code>:</code>) after <code>guess</code> tells Rust we'll annotate the variable's type. Rust has a few built-in number types; the <code>u32</code> seen here is an unsigned, 32-bit integer. It's a good default choice for a small positive number. You'll learn about other number types in Chapter 3.</p>
+<p>Additionally, the <code>u32</code> annotation in this example program and the comparison with <code>secret_number</code> means Rust will infer that <code>secret_number</code> should be a <code>u32</code> as well. So now the comparison will be between two values of the same type!</p>
+<p>The <code>parse</code> method will only work on characters that can logically be converted into numbers and so can easily cause errors. If, for example, the string contained <code>A👍%</code>, there would be no way to convert that to a number. Because it might fail, the <code>parse</code> method returns a <code>Result</code> type, much as the <code>read_line</code> method does (discussed earlier in &quot;Handling Potential Failure with Result&quot;). We'll treat this <code>Result</code> the same way by using the <code>expect</code> method again. If <code>parse</code> returns an <code>Err Result</code> variant because it couldn't create a number from the string, the <code>expect</code> call will crash the game and print the message we give it. If <code>parse</code> can successfully convert the string to a number, it will return the <code>Ok</code> variant of <code>Result</code>, and <code>expect</code> will return the number that we want from the <code>Ok</code> value.</p>
+<pre><code class="language-text">$ cargo run
+    Finished dev [unoptimized + debuginfo] target(s) in 0.02s
+     Running `target\debug\guessing_game.exe`
+Guess the number!
+The secret number is: 46
+Please input your guess.
+     77
+You guessed: 77
+Too big!
+</code></pre>
+<p>Nice! Even though spaces were added before the guess, the program still figured out that the user guessed 77. Run the program a few times to verify the different behavior with different kinds of input: guess the number correctly, guess a number that is too high, and guess a number that is too low.</p>
+<p>Let's change that by adding a loop!</p>
+<h2 id="allowing-multiple-guesses-with-looping"><a class="header" href="#allowing-multiple-guesses-with-looping">Allowing Multiple Guesses with Looping</a></h2>
+<p>The <code>loop</code> keyword creates an infinite loop. We'll add a loop to give users more chances at guessing the number.</p>
+<pre><code class="language-rust  noplayground"><span class="boring">use std::io;
+</span><span class="boring">use std::cmp::Ordering;
+</span><span class="boring">use rand::Rng;
+</span><span class="boring">
+</span><span class="boring">fn main() {
+</span><span class="boring">    println!(&quot;Guess the number!&quot;);
+</span><span class="boring">
+</span><span class="boring">    let secret_number = rand::thread_rng().gen_range(1..=100);
+</span><span class="boring">
+</span><span class="boring">    println!(&quot;The secret number is: {secret_number}&quot;);
+</span><span class="boring">
+</span>    loop {
+<span class="boring">        println!(&quot;Please input your guess.&quot;);
+</span><span class="boring">
+</span><span class="boring">        let mut guess = String::new();
+</span><span class="boring">
+</span><span class="boring">        io::stdin()
+</span><span class="boring">            .read_line(&amp;mut guess)
+</span><span class="boring">            .expect(&quot;Failed to read line&quot;);
+</span><span class="boring">
+</span><span class="boring">        let guess: u32 = guess
+</span><span class="boring">            .trim()
+</span><span class="boring">            .parse()
+</span><span class="boring">            .expect(&quot;Please type a number!&quot;);
+</span><span class="boring">
+</span><span class="boring">        println!(&quot;You guessed: {guess}&quot;);
+</span><span class="boring">
+</span><span class="boring">        match guess.cmp(&amp;secret_number) {
+</span><span class="boring">            Ordering::Less =&gt; println!(&quot;Too small!&quot;),
+</span><span class="boring">            Ordering::Greater =&gt; println!(&quot;Too big!&quot;),
+</span><span class="boring">            Ordering::Equal =&gt; println!(&quot;You win!&quot;),
+</span><span class="boring">        }
+</span>    }
+<span class="boring">}</span></code></pre>
+<p>As you can see, we've moved everything from the guess input prompt onward into a loop.
+Be sure to indent the lines inside the loop another four spaces each and run the program again. The program will now ask for another guess forever, which actually introduces a new problem.
+It doesn't seem like the user can quit!</p>
+<p>The user could always interrupt the program by using the keyboard shortcut CTRL-C. But there's another way to escape this insatiable monster as mentioned in the <code>parse</code> discussion in &quot;Comparing the Guess to the Secret Number&quot;: if the user enters a non-number answer, the program will crash. We can take advantage of that to allow the user to quit, as shown here:</p>
+<pre><code class="language-text">$ cargo run
+    Finished dev [unoptimized + debuginfo] target(s) in 0.10s
+     Running `target\debug\guessing_game.exe`
+Guess the number!
+The secret number is: 65
+Please input your guess.
+45
+You guessed: 45
+Too small!
+Please input your guess.
+70
+You guessed: 70
+Too big!
+Please input your guess.
+65
+You guessed: 65
+You win!
+Please input your guess.
+quit
+thread 'main' panicked at 'Please type a number!: ParseIntError { kind: InvalidDigit }', src\main.rs:24:14 
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+error: process didn't exit successfully: `target\debug\guessing_game.exe` (exit code: 101)
+</code></pre>
+<p>Typing <code>quit</code> will quit the game, but as you'll notice, so will entering any other non-number input. This is suboptimal, to say the least; we want the game to also stop when the correct number is guessed.</p>
+<h3 id="quitting-after-a-correct-guess"><a class="header" href="#quitting-after-a-correct-guess">Quitting After a Correct Guess</a></h3>
+<p>Let's program the game to quit when the user wins by addig a <code>break</code> statement:</p>
+<pre><code class="language-rust  noplayground"><span class="boring">use std::io;
+</span><span class="boring">use std::cmp::Ordering;
+</span><span class="boring">use rand::Rng;
+</span><span class="boring">
+</span><span class="boring">fn main() {
+</span><span class="boring">    println!(&quot;Guess the number!&quot;);
+</span><span class="boring">
+</span><span class="boring">    let secret_number = rand::thread_rng().gen_range(1..=100);
+</span><span class="boring">
+</span><span class="boring">    println!(&quot;The secret number is: {secret_number}&quot;);
+</span><span class="boring">
+</span><span class="boring">    loop {
+</span><span class="boring">        println!(&quot;Please input your guess.&quot;);
+</span><span class="boring">
+</span><span class="boring">        let mut guess = String::new();
+</span><span class="boring">
+</span><span class="boring">        io::stdin()
+</span><span class="boring">            .read_line(&amp;mut guess)
+</span><span class="boring">            .expect(&quot;Failed to read line&quot;);
+</span><span class="boring">
+</span><span class="boring">        let guess: u32 = guess
+</span><span class="boring">            .trim()
+</span><span class="boring">            .parse()
+</span><span class="boring">            .expect(&quot;Please type a number!&quot;);
+</span><span class="boring">
+</span><span class="boring">        println!(&quot;You guessed: {guess}&quot;);
+</span><span class="boring">
+</span><span class="boring">        match guess.cmp(&amp;secret_number) {
+</span><span class="boring">            Ordering::Less =&gt; println!(&quot;Too small!&quot;),
+</span><span class="boring">            Ordering::Greater =&gt; println!(&quot;Too big!&quot;),
+</span>            Ordering::Equal =&gt; {
+                println!(&quot;You win!&quot;);
+                break;
+            }
+<span class="boring">        }
+</span><span class="boring">    }
+</span><span class="boring">}</span></code></pre>
+<p>Adding the <code>break</code> line after <code>You win!</code> makes the program exit the loop when the user guesses the secret number correctly. Exiting the loop also means exiting the program, because the loop is the last part of <code>main</code>.</p>
+<h3 id="handling-invalid-input"><a class="header" href="#handling-invalid-input">Handling Invalid Input</a></h3>
+<p>To further refine the game's behavior, rather than crashing the program when the user inputs a non-number, let's make the game ignore a non-number so the user can continue guessing. We can do that by altering the line where <code>guess</code> is converted from a <code>String</code> to a <code>u32</code>.</p>
+<pre><code class="language-rust  noplayground"><span class="boring">use std::io;
+</span><span class="boring">use std::cmp::Ordering;
+</span><span class="boring">use rand::Rng;
+</span><span class="boring">
+</span><span class="boring">fn main() {
+</span><span class="boring">    println!(&quot;Guess the number!&quot;);
+</span><span class="boring">
+</span><span class="boring">    let secret_number = rand::thread_rng().gen_range(1..=100);
+</span><span class="boring">
+</span><span class="boring">    println!(&quot;The secret number is: {secret_number}&quot;);
+</span><span class="boring">
+</span><span class="boring">    loop {
+</span><span class="boring">        println!(&quot;Please input your guess.&quot;);
+</span><span class="boring">
+</span><span class="boring">        let mut guess = String::new();
+</span><span class="boring">
+</span><span class="boring">        io::stdin()
+</span><span class="boring">            .read_line(&amp;mut guess)
+</span><span class="boring">            .expect(&quot;Failed to read line&quot;);
+</span><span class="boring">
+</span>        let guess: u32 = match guess.trim().parse() {
+            Ok(num) =&gt; num,
+            Err(_) =&gt; continue,
+        };
+<span class="boring">
+</span><span class="boring">        println!(&quot;You guessed: {guess}&quot;);
+</span><span class="boring">
+</span><span class="boring">        match guess.cmp(&amp;secret_number) {
+</span><span class="boring">            Ordering::Less =&gt; println!(&quot;Too small!&quot;),
+</span><span class="boring">            Ordering::Greater =&gt; println!(&quot;Too big!&quot;),
+</span><span class="boring">            Ordering::Equal =&gt; {
+</span><span class="boring">                println!(&quot;You win!&quot;);
+</span><span class="boring">                break;
+</span><span class="boring">            }
+</span><span class="boring">        }
+</span><span class="boring">    }
+</span><span class="boring">}</span></code></pre>
+<p>We switch from an <code>expect</code> call to a <code>match</code> expression to move from crashing on an error to handling the error. Remember that <code>parse</code> returns a <code>Result</code> type and <code>Result</code> is an enum that has the variants <code>Ok</code> and <code>Err</code>. We're using a <code>match</code> expression here, as we did with the <code>Ordering</code> result of the <code>cmp</code> method.</p>
+<p>If <code>parse</code> is able to successfully turn the string into a number, it will return an <code>Ok</code> value that contains the resultant number. That <code>Ok</code> value will match the first arm's pattern, and the <code>match</code> expression will just return the <code>num</code> value that <code>parse</code> produced and put inside the <code>Ok</code> value. That number will end up right where we want it in the new <code>guess</code> variable we're creating.</p>
+<p>If <code>parse</code> is not able to turn the string into a number, it will return an <code>Err</code> value that contains more information about the error. The <code>Err</code> value does not match the <code>Ok(num)</code> pattern in the first <code>match</code> arm, but it does match the <code>Err(_)</code> pattern in the second arm. The underscore, <code>_</code>, is a catch-all value; in this example, we're saying we want to match all <code>Err</code> values, no matter what information they have inside them. So the program will execute the second arm's code, <code>continue</code>, which tells the program to go to the next iteration of the <code>loop</code> and ask for another guess. So, effectively, the program ignores all errors that <code>parse</code> might encounter!</p>
+<pre><code class="language-text">$ cargo run
+   Compiling guessing_game v0.1.0 (C:\Users\jerok\projects\study_blog\rust_lang_book\code\ch02\guessing_game)
+    Finished dev [unoptimized + debuginfo] target(s) in 0.55s                                             
+     Running `target\debug\guessing_game.exe`
+Guess the number!
+The secret number is: 31
+Please input your guess.
+10
+You guessed: 10
+Too small!
+Please input your guess.
+99
+You guessed: 99
+Too big!
+Please input your guess.
+foo
+Please input your guess.
+31
+You guessed: 31
+You win!
+</code></pre>
+<p>Awesome! With one tiny final tweak, we will finight the guessing game.
+Recall that the program is still printing the secret number. That worked well for testing, but it ruins the game. Let's delete the <code>println!</code> that outputs the secret number.</p>
+<p>final code:</p>
+<pre><pre class="playground"><code class="language-rust edition2021">use rand::Rng;
+use std::cmp::Ordering;
+use std::io;
+
+fn main() {
+    println!(&quot;Guess the number!&quot;);
+
+    let secret_number = rand::thread_rng().gen_range(1..=100);
+
+    loop {
+        println!(&quot;Please input your guess.&quot;);
+
+        let mut guess = String::new();
+
+        io::stdin()
+            .read_line(&amp;mut guess)
+            .expect(&quot;Failed to read line&quot;);
+
+        let guess: u32 = match guess.trim().parse() {
+            Ok(num) =&gt; num,
+            Err(_) =&gt; continue,
+        };
+
+        println!(&quot;You guessed: {guess}&quot;);
+
+        match guess.cmp(&amp;secret_number) {
+            Ordering::Less =&gt; println!(&quot;Too small!&quot;),
+            Ordering::Greater =&gt; println!(&quot;Too big!&quot;),
+            Ordering::Equal =&gt; {
+                println!(&quot;You win!&quot;);
+                break;
+            }
+        }
+    }
+}</code></pre></pre>
+<h2 id="summary"><a class="header" href="#summary">Summary</a></h2>
+<p>This project was a hands-on way to introduce you to many new Rust concepts: <code>let</code>, <code>match</code>, functions, the use of external crates, and more. In the next few chapters, you'll learn about these concepts in more detail. Chapter 3 covers concepts that most programming languages have, such as variables, data types, and functions, and shows how to use them in Rust. Chapter 4 explores ownership, a feature that makes Rust different from other languages. Chapter 5 discusses structs and method syntax, and Chapter 6 explains how enums work.</p>
 
                     </main>
 
