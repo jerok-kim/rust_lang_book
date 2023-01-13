@@ -716,7 +716,7 @@ Recall that the program is still printing the secret number. That worked well fo
 
 final code:
 
-```rust
+```rust, noplayground
 use rand::Rng;
 use std::cmp::Ordering;
 use std::io;

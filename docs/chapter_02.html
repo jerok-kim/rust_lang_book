@@ -707,7 +707,7 @@ You win!
 <p>Awesome! With one tiny final tweak, we will finight the guessing game.
 Recall that the program is still printing the secret number. That worked well for testing, but it ruins the game. Let's delete the <code>println!</code> that outputs the secret number.</p>
 <p>final code:</p>
-<pre><pre class="playground"><code class="language-rust edition2021">use rand::Rng;
+<pre><code class="language-rust  noplayground">use rand::Rng;
 use std::cmp::Ordering;
 use std::io;
 
@@ -741,7 +741,7 @@ fn main() {
             }
         }
     }
-}</code></pre></pre>
+}</code></pre>
 <h2 id="summary"><a class="header" href="#summary">Summary</a></h2>
 <p>This project was a hands-on way to introduce you to many new Rust concepts: <code>let</code>, <code>match</code>, functions, the use of external crates, and more. In the next few chapters, you'll learn about these concepts in more detail. Chapter 3 covers concepts that most programming languages have, such as variables, data types, and functions, and shows how to use them in Rust. Chapter 4 explores ownership, a feature that makes Rust different from other languages. Chapter 5 discusses structs and method syntax, and Chapter 6 explains how enums work.</p>
 

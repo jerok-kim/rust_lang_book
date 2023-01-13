@@ -23,8 +23,8 @@ $ curl --proto '=https' --tlsv1.3 https://sh.rustup.rs -sSf | sh
 
 ### Installing rustup on Windows
 
-https://www.rust-lang.org/tools/install
-https://visualstudio.microsoft.com/downloads
+[installing rustup](https://www.rust-lang.org/tools/install)<br>
+[installing visualstudio](https://visualstudio.microsoft.com/downloads)
 
 ### Troubleshooting
 
