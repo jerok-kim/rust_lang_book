@@ -1,3 +1,4 @@
 fn main() {
-    println!("Hello, world!");
+    let s1 = String::from("hello");
+    let h = s1[0];
 }
