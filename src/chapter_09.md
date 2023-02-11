@@ -1,7 +1,7 @@
 # Error Handling
 
 Errors are a fact of life in software, so Rust has a number of features for handling situations in which something goes
-wrong. In many cases, Rust requires you acknowledge the possibility of an error and take some action before your code
+wrong. In many cases, Rust requires you to acknowledge the possibility of an error and take some action before your code
 will compile. This requirement makes your program more robust by ensuring that you'll discover errors and handle them
 appropriately before deploying your code to production!
 
@@ -602,7 +602,7 @@ Luckily, `main` can also return a `Result<(), E>`. Listing 9-12 has the code fro
 return type of `main` to be `Result<(), Box<dyn Error>>` and added a return value `Ok(())` to the end. This code will
 now compile.
 
-```rust
+```rust, noplayground
 use std::error::Error;
 use std::fs::File;
 
