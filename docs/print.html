@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="kr" class="sidebar-visible no-js rust">
+<html lang="kr" class="sidebar-visible no-js light">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
@@ -38,7 +38,7 @@
         <!-- Provide site root to javascript -->
         <script>
             var path_to_root = "";
-            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "rust";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
         </script>
 
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
@@ -64,7 +64,7 @@
             if (theme === null || theme === undefined) { theme = default_theme; }
             var html = document.querySelector('html');
             html.classList.remove('no-js')
-            html.classList.remove('rust')
+            html.classList.remove('light')
             html.classList.add(theme);
             html.classList.add('js');
         </script>
@@ -5705,7 +5705,7 @@ for these exercises!</p>
 We'll do that next!</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="error-handling"><a class="header" href="#error-handling">Error Handling</a></h1>
 <p>Errors are a fact of life in software, so Rust has a number of features for handling situations in which something goes
-wrong. In many cases, Rust requires you acknowledge the possibility of an error and take some action before your code
+wrong. In many cases, Rust requires you to acknowledge the possibility of an error and take some action before your code
 will compile. This requirement makes your program more robust by ensuring that you'll discover errors and handle them
 appropriately before deploying your code to production!</p>
 <p>Rust groups errors into two major categories: recoverable and unrecoverable errors. For a recoverable error, such as a
@@ -6181,14 +6181,14 @@ as expected.</p>
 <p>Luckily, <code>main</code> can also return a <code>Result&lt;(), E&gt;</code>. Listing 9-12 has the code from Listing 9-10, but we've changed the
 return type of <code>main</code> to be <code>Result&lt;(), Box&lt;dyn Error&gt;&gt;</code> and added a return value <code>Ok(())</code> to the end. This code will
 now compile.</p>
-<pre><pre class="playground"><code class="language-rust edition2021">use std::error::Error;
+<pre><code class="language-rust  noplayground">use std::error::Error;
 use std::fs::File;
 
 fn main() -&gt; Result&lt;(), Box&lt;dyn Error&gt;&gt; {
     let greeting_file = File::open(&quot;hello.txt&quot;)?;
 
     Ok(())
-}</code></pre></pre>
+}</code></pre>
 <ul>
 <li>Listing 9-12: Changing <code>main</code> to return <code>Result&lt;(), E&gt;</code> allows the use of the <code>?</code> operator on <code>Result</code> values.</li>
 </ul>

@@ -16,7 +16,7 @@ use-default-preprocessors = true
 extra-watch-dirs = []
 
 [output.html]
-default-theme = "Rust"
+default-theme = "Light"
 mathjax-support = true
 git-repository-url = "https://github.com/jerok-kim/rust_lang_book"
 git-repository-icon = "fa-github"
